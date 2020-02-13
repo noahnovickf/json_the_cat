@@ -1,21 +1,20 @@
 const request = require("request");
-const breed = process.argv[2];
-let url = `https://api.thecatapi.com/v1/breeds/search?q=${breed}`;
+process.argv[2];
 
-const fetcher = url => {
+const fetcher = (breedName, callback) => {
+  let url = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
   request(url, (error, response, body) => {
     if (error) {
-      console.error("Error", error);
+      callback(error, null);
       return;
     }
     const data = JSON.parse(body);
-
     if (!data[0]) {
-      console.log("The breed is extinct in our server.");
+      callback("The breed is extinct in our server.");
     } else {
-      console.log(data[0].description);
+      callback(null, data[0].description);
     }
   });
 };
 
-fetcher(url);
+module.exports = { fetcher };
